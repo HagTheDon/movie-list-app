@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getMovie, editMovie, uploadImage } from "../../api/mainApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthContext } from "../../context/AuthContext";
+import Image from "next/image"; // Import the Image component
 
 type Inputs = {
   title: string;
@@ -99,7 +100,7 @@ export default function EditMoviePage() {
     }
   };
 
-  //Upload Image
+  // Upload Image
   const uploadImageMutation = useMutation({
     mutationFn: (data) => uploadImage(data),
     onSuccess: (dataUpload) => {
@@ -145,16 +146,18 @@ export default function EditMoviePage() {
             <div className="w-1/2 h-1/2 border-dashed border-2 border-white bg-[#092C39] rounded-lg flex items-center justify-center relative">
               {/* Image preview */}
               {posterUrl ? (
-                <img
+                <Image
                   src={posterUrl}
                   alt="Selected Poster"
                   className="object-cover w-full h-full rounded-lg"
+                  layout="fill"
                 />
               ) : initialPosterUrl ? (
-                <img
+                <Image
                   src={`https://movies-next-demo.s3.eu-west-1.amazonaws.com/${initialPosterUrl}`}
                   alt="Poster"
                   className="object-cover w-full h-full rounded-lg"
+                  layout="fill"
                 />
               ) : (
                 <span className="text-white text-sm">Drag an image here</span>
