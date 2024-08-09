@@ -1,24 +1,22 @@
 "use client";
-import React, { useContext } from "react";
-import Button from "./components/button";
-import CustomInput from "./components/customInput";
+import Button from "../components/button";
+import CustomInput from "../components/customInput";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "./api/mainApi";
+import { registerUser } from "../api/mainApi";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "./context/AuthContext";
-import isNotAuth from "./components/isNotAuth";
+import isNotAuth from "../components/isNotAuth";
 
 type Inputs = {
+  name: string;
   email: string;
   password: string;
-  token_expiry: boolean;
+  repeatPassword: string;
 };
 
 const Page = () => {
   const router = useRouter();
-  const { setToken } = useContext(AuthContext);
   //Initialize form - react-hook-form
   const {
     register,
@@ -28,35 +26,32 @@ const Page = () => {
   } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
-    let params = {
-      email: data.email,
-      password: data.password,
-      token_expiry: data.token_expiry ? "7d" : "2h",
-    };
-
+    let params = data;
     console.log("params to be sent", params);
-    loginMutation.mutate(params);
+    registerMutation.mutate(data);
   };
   // Queries - react-query
-  //Mutation - Login
-  const loginMutation = useMutation({
-    mutationFn: (data) => loginUser(data),
+  //Mutation - Register
+  const registerMutation = useMutation({
+    mutationFn: (data) => registerUser(data),
     onSuccess: (response) => {
-      console.log("login successful", response);
-      setToken(response?.data);
-      localStorage.setItem("token", response?.data);
-      router.push("/dashboard");
+      console.log("registration successful", response);
+      router.push("/");
     },
     onError(error: any) {
       console.log("error regisration", error);
-      setToken(null);
-      localStorage.removeItem("token");
     },
   });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <p>Sign In</p>
+      <p>Register</p>
+      <CustomInput
+        placeholder="name"
+        inputType="text"
+        name="name"
+        register={register}
+      />
       <CustomInput
         placeholder="email"
         inputType="text"
@@ -69,19 +64,19 @@ const Page = () => {
         name="password"
         register={register}
       />
-      <div className="flex items-center space-x-2">
-        <input type="checkbox" {...register("token_expiry")} id="rememberMe" />
-        <label htmlFor="rememberMe" className="text-white">
-          Remember me
-        </label>
-      </div>
+      <CustomInput
+        placeholder="repeat password"
+        inputType="password"
+        name="repeatPassword"
+        register={register}
+      />
       <Button buttonStyle="primary" type="submit">
-        Login
+        Register
       </Button>
       <p className="text-white">
-        Don't have an account?
-        <Link key="login" href="/register">
-          <span>Register</span>
+        Already have an account?
+        <Link key="login" href="/login">
+          <span> Login</span>
         </Link>
       </p>
     </form>
