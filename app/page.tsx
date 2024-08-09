@@ -79,7 +79,7 @@ const Page = () => {
         Login
       </Button>
       <p className="text-white">
-        Don't have an account?
+        Don&#39;t have an account?
         <Link key="login" href="/register">
           <span>Register</span>
         </Link>
