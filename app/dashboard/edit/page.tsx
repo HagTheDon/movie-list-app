@@ -2,13 +2,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import Header from "../../components/header";
 import CustomButton from "../../components/button";
-import CustomInput from "../../components/customInput";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getMovie, editMovie, uploadImage } from "../../api/mainApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthContext } from "../../context/AuthContext";
-import Image from "next/image"; // Import the Image component
+import Image from "next/image";
 
 type Inputs = {
   title: string;
@@ -50,20 +49,11 @@ export default function EditMoviePage() {
 
   useEffect(() => {
     if (isSuccess && !isLoading) {
-      console.log("query successful", movie);
       reset({
         title: movie?.title,
         publishing_year: movie?.publishing_year,
       });
       setInitialPosterUrl(movie?.poster_url);
-      console.log(
-        "values set",
-        watchTitle,
-        watchPublishingYear,
-        initialPosterUrl
-      );
-    } else {
-      console.log("query failed or not started", isError, movie, errorMovie);
     }
   }, [isLoading]);
 
@@ -73,7 +63,6 @@ export default function EditMoviePage() {
 
   // Generate a preview URL when a file is selected
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("generating preview");
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setPosterUrl(URL.createObjectURL(file)); // Create a temporary URL for the selected image
@@ -85,7 +74,6 @@ export default function EditMoviePage() {
       // Step 1: Upload image if a new one is selected
       const formData = new FormData();
       formData.append("file", data.poster[0]);
-      console.log("data submitted", formData);
       uploadImageMutation.mutate({
         asset_type: "movies",
         body: formData,
@@ -124,8 +112,7 @@ export default function EditMoviePage() {
     mutationFn: (data) => editMovie(data),
     onSuccess: (response) => {
       // Step 3: Success, redirect
-      console.log("Update movie success", response);
-      router.push("/"); // Redirect after successful submission
+      router.push("/");
     },
     onError(error: any) {
       // Show error
@@ -139,76 +126,84 @@ export default function EditMoviePage() {
   return (
     <>
       <Header showProfile={true}>Edit Movie</Header>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex flex-1 max-h-[calc(100vh-64px)] p-6">
-          {/* Left Section - Drag and Drop */}
-          <div className="flex-1 flex justify-center">
-            <div className="w-1/2 h-1/2 border-dashed border-2 border-white bg-[#092C39] rounded-lg flex items-center justify-center relative">
-              {/* Image preview */}
-              {posterUrl ? (
-                <Image
-                  src={posterUrl}
-                  alt="Selected Poster"
-                  className="object-cover w-full h-full rounded-lg"
-                  layout="fill"
-                />
-              ) : initialPosterUrl ? (
-                <Image
-                  src={`https://movies-next-demo.s3.eu-west-1.amazonaws.com/${initialPosterUrl}`}
-                  alt="Poster"
-                  className="object-cover w-full h-full rounded-lg"
-                  layout="fill"
-                />
-              ) : (
-                <span className="text-white text-sm">Drag an image here</span>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                {...register("poster")}
-                onChange={handleImageChange} // Handle image selection
-                className="absolute opacity-0 cursor-pointer w-full h-full"
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-6">
+        <div className="flex items-start space-x-4">
+          {/* Image Upload Box */}
+          <div className="flex-shrink-0 w-1/3 h-80 border-dashed border-2 border-white rounded-lg relative flex items-center justify-center">
+            {/* Image preview */}
+            {posterUrl ? (
+              <img
+                src={posterUrl}
+                alt="Selected Poster"
+                className="object-cover w-full h-full rounded-lg"
               />
-            </div>
+            ) : initialPosterUrl ? (
+              <Image
+                src={`https://movies-next-demo.s3.eu-west-1.amazonaws.com/${initialPosterUrl}`}
+                alt="Poster"
+                className="object-cover w-full h-full rounded-lg"
+                layout="fill"
+              />
+            ) : (
+              <span className="text-white text-sm flex items-center justify-center h-full">
+                Drag an image here
+              </span>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              {...register("poster")}
+              onChange={handleImageChange}
+              className="absolute opacity-0 cursor-pointer w-full h-full"
+            />
           </div>
 
-          {/* Right Section - Form Inputs */}
-          <div className="flex-1 pl-8 flex flex-col justify-between">
-            <div className="space-y-6">
-              <CustomInput
-                placeholder="Title"
-                inputType="text"
-                name="title"
-                register={register}
-              />
-              <CustomInput
-                placeholder="Publishing year"
-                inputType="text"
-                name="publishing_year"
-                register={register}
-              />
-              <div className="space-x-4">
-                <CustomButton
-                  buttonStyle="secondary"
-                  onClick={() => router.push("/")}
-                >
-                  Cancel
-                </CustomButton>
-                <CustomButton
-                  buttonStyle="primary"
-                  type="submit"
-                  disabled={
-                    uploadImageMutation.isPending ||
-                    updateMovieMutation.isPending
-                  }
-                >
-                  {uploadImageMutation.isPending
-                    ? "Uploading Image ..."
-                    : updateMovieMutation.isPending
-                    ? "Updating Movie ..."
-                    : "Update"}
-                </CustomButton>
-              </div>
+          {/* Form Inputs */}
+          <div className="flex-1 space-y-4 px-5">
+            <input
+              type="text"
+              placeholder="Title"
+              {...register("title", { required: true })}
+              className="w-full px-3 py-2 rounded-lg bg-green-light border border-green-light text-white text-body-small focus:outline-none focus:bg-white focus:border-green-light focus:text-green-light focus:caret-green-light"
+            />
+            {errors.title && <p className="text-red-500">Title is required</p>}
+
+            <input
+              type="text"
+              placeholder="Publishing year"
+              {...register("publishing_year", {
+                required: true,
+                pattern: {
+                  value: /^[0-9]{4}$/,
+                  message: "Publishing year must be a valid year (e.g., 1999)",
+                },
+              })}
+              className="w-full px-3 py-2 rounded-lg bg-green-light border border-green-light text-white text-body-small focus:outline-none focus:bg-white focus:border-green-light focus:text-green-light focus:caret-green-light"
+            />
+            {errors.publishing_year && (
+              <p className="text-red-500">{errors.publishing_year.message}</p>
+            )}
+
+            <div className="space-x-4">
+              <CustomButton
+                buttonStyle="secondary"
+                onClick={() => router.push("/")}
+              >
+                Cancel
+              </CustomButton>
+              <CustomButton
+                buttonStyle="primary"
+                type="submit"
+                disabled={
+                  uploadImageMutation.isPending || updateMovieMutation.isPending
+                }
+              >
+                {uploadImageMutation.isPending
+                  ? "Uploading Image ..."
+                  : updateMovieMutation.isPending
+                  ? "Updating Movie ..."
+                  : "Update"}
+              </CustomButton>
             </div>
           </div>
         </div>

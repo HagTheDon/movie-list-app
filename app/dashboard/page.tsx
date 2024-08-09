@@ -30,9 +30,8 @@ const Page = () => {
 
   return (
     <div className="min-h-screen">
-      <Header showProfile={true}>
-        My Movies -{" "}
-        <p onClick={() => router.push(`/dashboard/add`)}>Add Movie</p>
+      <Header showProfile={true} showAdd={true}>
+        My Movies
       </Header>
       {status === "error" ? (
         <p className="text-white">Error loading ..</p>

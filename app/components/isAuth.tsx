@@ -9,7 +9,6 @@ export default function isAuth(Component) {
     useEffect(() => {
       const checkAuth = async () => {
         const token = await localStorage.getItem("token");
-        console.log("checking auth", token);
         if (!token) {
           router.push("/login"); // Redirect to login if no token
         }

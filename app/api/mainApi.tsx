@@ -1,5 +1,6 @@
 import axios from "axios";
-const BASE_URL = "http://3.255.161.150:3004/v1/";
+// const BASE_URL = "http://3.255.161.150:3004/v1/";
+const BASE_URL = "http://localhost:3004/v1/";
 
 export const mainApi = axios.create({
   baseURL: BASE_URL,
@@ -28,7 +29,6 @@ mainApi.interceptors.request.use(
 
 //USER
 export const registerUser = async (params: any) => {
-  console.log("register endpoint hit with", params);
   const response = await mainApi.post(`users/register`, JSON.stringify(params));
   return response.data;
 };
@@ -48,11 +48,6 @@ export const editProfile = async (params: any) => {
     `users/${params.id}`,
     JSON.stringify(params)
   );
-  return response.data;
-};
-
-export const deleteAccount = async (params: any) => {
-  const response = await mainApi.delete(`users`, JSON.stringify(params));
   return response.data;
 };
 

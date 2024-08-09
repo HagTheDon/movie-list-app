@@ -6,6 +6,7 @@ interface InputProps {
   placeholder: string;
   inputType: string;
   name: string;
+  errors?: any;
   [key: string]: any;
 }
 
@@ -14,18 +15,22 @@ export default function CustomInput({
   name,
   placeholder,
   inputType,
+  errors,
   ...rest
 }: InputProps) {
   return (
-    <div className="max-w-sm">
+    <div className="w-full">
       <input
         {...register(name)}
         {...rest}
         id="custom-input"
         type={inputType}
         placeholder={placeholder}
-        className="w-full px-3 py-2 rounded-lg bg-[#224957] border border-[#224957] text-white focus:outline-none focus:ring-2 focus:ring-[#092C39]"
+        className="w-full px-3 py-2 rounded-lg bg-green-light border border-green-light text-white text-body-small focus:outline-none focus:bg-white focus:border-green-light focus:text-green-light focus:caret-green-light"
       />
+      {errors && (
+        <p className="text-red-500 text-body-small">{errors.message}</p>
+      )}
     </div>
   );
 }

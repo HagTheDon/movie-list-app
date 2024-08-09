@@ -8,7 +8,6 @@ export default function isNotAuth(Component) {
     useEffect(() => {
       const checkAuth = async () => {
         const token = await localStorage.getItem("token");
-        console.log("checking auth", token);
         if (token) {
           router.push("/dashboard");
         }
