@@ -1,7 +1,5 @@
 import axios from "axios";
-const BASE_URL = "http://localhost:3004/v1/";
-//const BASE_URL = "https://api.cabbily.com/v1/admin/";
-//const BASE_URL = "https://api-staging.cabbily.com/v1/admin/";
+const BASE_URL = "http://3.255.161.150:3004/v1/";
 
 export const mainApi = axios.create({
   baseURL: BASE_URL,
