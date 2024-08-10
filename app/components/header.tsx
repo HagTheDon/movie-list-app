@@ -1,18 +1,17 @@
 "use client";
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import {
   HomeIcon,
   ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import { AuthContext } from "../context/AuthContext";
-import CustomButton from "./button";
 import { useRouter } from "next/navigation";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
 interface HeaderProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   showProfile: boolean;
-  showAdd: boolean;
+  showAdd?: boolean;
 }
 
 export default function Header({
@@ -21,13 +20,8 @@ export default function Header({
   showAdd = false,
 }: HeaderProps) {
   const router = useRouter();
+  // @ts-ignore
   const { setToken, token } = useContext(AuthContext);
-
-  // useEffect(() => {
-  //   if (token == null) {
-  //     router.push("/");
-  //   }
-  // }, [token]);
 
   const onClickLogout = () => {
     setToken(null);

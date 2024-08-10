@@ -60,6 +60,7 @@ export default function Pagination({
 
       {pages.map((page) => (
         <Button
+          buttonStyle={page === currentPage ? "primary" : "secondary"}
           key={page}
           className={`px-2 py-1 rounded ${
             page === currentPage

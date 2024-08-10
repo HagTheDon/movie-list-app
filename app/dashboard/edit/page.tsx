@@ -19,6 +19,7 @@ export default function EditMoviePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const movieId = searchParams.get("id");
+  // @ts-ignore
   const { setToken } = useContext(AuthContext);
   const [posterUrl, setPosterUrl] = useState<string | null>(null); // Store the image preview URL
   const [initialPosterUrl, setInitialPosterUrl] = useState<string | null>(null); // Store initial poster URL from DB
@@ -74,12 +75,14 @@ export default function EditMoviePage() {
       // Step 1: Upload image if a new one is selected
       const formData = new FormData();
       formData.append("file", data.poster[0]);
+      // @ts-ignore
       uploadImageMutation.mutate({
         asset_type: "movies",
         body: formData,
       });
     } else {
       // Step 2: If no new image is selected, update the movie directly
+      // @ts-ignore
       updateMovieMutation.mutate({
         title: watchTitle,
         publishing_year: watchPublishingYear,
@@ -99,6 +102,7 @@ export default function EditMoviePage() {
         poster_url: dataUpload?.data,
         id: movieId,
       };
+      // @ts-ignore
       updateMovieMutation.mutate(params);
     },
     onError(error: any) {

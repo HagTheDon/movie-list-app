@@ -1,9 +1,24 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 
-export const AuthContext = createContext();
+// Define the shape of your context
+interface AuthContextType {
+  token: string | null;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  loading: boolean;
+}
 
-export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(null);
+// Define the shape of your provider props
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+// Create the context with a default value
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

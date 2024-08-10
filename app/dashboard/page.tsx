@@ -37,6 +37,7 @@ const Page = () => {
         <p className="text-white">Error loading ..</p>
       ) : status === "pending" ? null : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+          {/* @ts-ignore */}
           {data?.data?.data?.map((movie, index) => (
             <div onClick={() => onClickEdit(movie?.id)} key={index}>
               <Card

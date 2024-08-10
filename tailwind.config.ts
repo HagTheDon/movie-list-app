@@ -33,9 +33,9 @@ const config: Config = {
         caption: ["14px", { lineHeight: "16px", letterSpacing: "0%" }],
       },
       fontWeight: {
-        semibold: 600,
-        bold: 700,
-        regular: 400,
+        semibold: "600",
+        bold: "700",
+        regular: "400",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

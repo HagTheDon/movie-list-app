@@ -16,6 +16,7 @@ type Inputs = {
 
 export default function Page() {
   const router = useRouter();
+  // @ts-ignore
   const { setToken } = useContext(AuthContext);
   const [posterUrl, setPosterUrl] = useState<string | null>(null); // Store the image preview URL
 
@@ -43,6 +44,7 @@ export default function Page() {
     // Step 1: Upload image
     const formData = new FormData();
     formData.append("file", data.poster[0]);
+    // @ts-ignore
     uploadImageMutation.mutate({
       asset_type: "movies",
       body: formData,
@@ -59,6 +61,7 @@ export default function Page() {
         publishing_year: watchPublishingYear,
         poster_url: dataUpload?.data,
       };
+      // @ts-ignore
       addMutation.mutate(params);
     },
     onError(error: any) {

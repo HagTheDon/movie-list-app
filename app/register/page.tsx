@@ -27,6 +27,7 @@ const Page = () => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
+    // @ts-ignore
     registerMutation.mutate(data);
   };
 

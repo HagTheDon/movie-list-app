@@ -17,6 +17,7 @@ type Inputs = {
 
 const Page = () => {
   const router = useRouter();
+  // @ts-ignore
   const { setToken } = useContext(AuthContext);
 
   // Initialize form - react-hook-form
@@ -32,6 +33,7 @@ const Page = () => {
       password: data.password,
       token_expiry: data.token_expiry ? "7d" : "2h",
     };
+    // @ts-ignore
     loginMutation.mutate(params);
   };
 
