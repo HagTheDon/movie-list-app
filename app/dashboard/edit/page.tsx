@@ -19,12 +19,10 @@ export default function EditMoviePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const movieId = searchParams.get("id");
-  // @ts-ignore
   const { setToken } = useContext(AuthContext);
-  const [posterUrl, setPosterUrl] = useState<string | null>(null); // Store the image preview URL
-  const [initialPosterUrl, setInitialPosterUrl] = useState<string | null>(null); // Store initial poster URL from DB
+  const [posterUrl, setPosterUrl] = useState<string | null>(null);
+  const [initialPosterUrl, setInitialPosterUrl] = useState<string | null>(null);
 
-  // Initialize form - react-hook-form
   const {
     register,
     handleSubmit,
@@ -41,10 +39,7 @@ export default function EditMoviePage() {
     error: errorMovie,
   } = useQuery({
     queryKey: ["movie", movieId],
-    queryFn: () =>
-      getMovie({
-        id: movieId,
-      }),
+    queryFn: () => getMovie({ id: movieId }),
     enabled: !!movieId,
   });
 
@@ -56,70 +51,53 @@ export default function EditMoviePage() {
       });
       setInitialPosterUrl(movie?.poster_url);
     }
-  }, [isLoading]);
+  }, [isSuccess, isLoading, reset, movie]);
 
-  // Watch for changes in the poster input
-  const watchTitle = watch("title");
-  const watchPublishingYear = watch("publishing_year");
-
-  // Generate a preview URL when a file is selected
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setPosterUrl(URL.createObjectURL(file)); // Create a temporary URL for the selected image
+      setPosterUrl(URL.createObjectURL(file));
     }
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (data.poster && data.poster.length > 0) {
-      // Step 1: Upload image if a new one is selected
       const formData = new FormData();
       formData.append("file", data.poster[0]);
-      // @ts-ignore
       uploadImageMutation.mutate({
         asset_type: "movies",
         body: formData,
       });
     } else {
-      // Step 2: If no new image is selected, update the movie directly
-      // @ts-ignore
       updateMovieMutation.mutate({
-        title: watchTitle,
-        publishing_year: watchPublishingYear,
+        title: watch("title"),
+        publishing_year: watch("publishing_year"),
         poster_url: initialPosterUrl,
       });
     }
   };
 
-  // Upload Image
   const uploadImageMutation = useMutation({
     mutationFn: (data) => uploadImage(data),
     onSuccess: (dataUpload) => {
-      // Step 2: On Success, update movie with the new image
-      const params = {
-        title: watchTitle,
-        publishing_year: watchPublishingYear,
+      updateMovieMutation.mutate({
+        title: watch("title"),
+        publishing_year: watch("publishing_year"),
         poster_url: dataUpload?.data,
         id: movieId,
-      };
-      // @ts-ignore
-      updateMovieMutation.mutate(params);
+      });
     },
     onError(error: any) {
-      // On error, show error
       console.log("Error uploading image", error);
     },
   });
 
-  // Update Movie
   const updateMovieMutation = useMutation({
     mutationFn: (data) => editMovie(data),
-    onSuccess: (response) => {
-      // Step 3: Success, redirect
+    onSuccess: () => {
       router.push("/");
     },
     onError(error: any) {
-      // Show error
       console.log("Update movie error", error);
     },
   });
@@ -132,9 +110,7 @@ export default function EditMoviePage() {
       <Header showProfile={true}>Edit Movie</Header>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-6">
         <div className="flex items-start space-x-4">
-          {/* Image Upload Box */}
           <div className="flex-shrink-0 w-1/3 h-80 border-dashed border-2 border-white rounded-lg relative flex items-center justify-center">
-            {/* Image preview */}
             {posterUrl ? (
               <img
                 src={posterUrl}
@@ -162,7 +138,6 @@ export default function EditMoviePage() {
             />
           </div>
 
-          {/* Form Inputs */}
           <div className="flex-1 space-y-4 px-5">
             <input
               type="text"
